@@ -1,3 +1,4 @@
+// Import the functions you need from the SDKs you need
 import { initializeApp, type FirebaseApp, type FirebaseOptions } from 'firebase/app'
 import {
   addDoc,
@@ -20,29 +21,17 @@ import type { Comment } from '../types/Comment'
 import type { Post } from '../types/Post'
 import type { PostFormData } from '../utils/postSchema'
 
-type FirebaseEnvKey =
-  | 'VITE_FIREBASE_API_KEY'
-  | 'VITE_FIREBASE_AUTH_DOMAIN'
-  | 'VITE_FIREBASE_PROJECT_ID'
-  | 'VITE_FIREBASE_STORAGE_BUCKET'
-  | 'VITE_FIREBASE_MESSAGING_SENDER_ID'
-  | 'VITE_FIREBASE_APP_ID'
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-function requireEnv(key: FirebaseEnvKey): string {
-  const value = import.meta.env[key]
-  if (!value) {
-    throw new Error(`Missing environment variable: ${key}`)
-  }
-  return value
-}
-
+// Your web app's Firebase configuration
 const firebaseConfig: FirebaseOptions = {
-  apiKey: requireEnv('VITE_FIREBASE_API_KEY'),
-  authDomain: requireEnv('VITE_FIREBASE_AUTH_DOMAIN'),
-  projectId: requireEnv('VITE_FIREBASE_PROJECT_ID'),
-  storageBucket: requireEnv('VITE_FIREBASE_STORAGE_BUCKET'),
-  messagingSenderId: requireEnv('VITE_FIREBASE_MESSAGING_SENDER_ID'),
-  appId: requireEnv('VITE_FIREBASE_APP_ID'),
+  apiKey: 'AIzaSyCLATP5p8XcZuo1nXsSRD0Rgo99UD0oM_Y',
+  authDomain: 'blog-kit-global-afcff.firebaseapp.com',
+  projectId: 'blog-kit-global-afcff',
+  storageBucket: 'blog-kit-global-afcff.firebasestorage.app',
+  messagingSenderId: '526778959516',
+  appId: '1:526778959516:web:3d86dc6e489776abc6cf59',
 }
 
 const app: FirebaseApp = initializeApp(firebaseConfig)
