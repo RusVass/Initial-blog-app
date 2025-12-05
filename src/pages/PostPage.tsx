@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { CommentsSection } from '../components/CommentsSection'
+import { Button } from '../components/ui/Button'
+import { Card } from '../components/ui/Card'
 import { deletePostFromFirestore, getPostById } from '../services/firebase'
 import type { Post } from '../types/Post'
 
@@ -68,7 +70,7 @@ export default function PostPage() {
 
   if (loading) {
     return (
-      <section className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
         <p className="text-base text-slate-500">Завантаження поста…</p>
       </section>
     )
@@ -76,11 +78,13 @@ export default function PostPage() {
 
   if (error) {
     return (
-      <section className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
-        <p className="text-base text-red-600">{error}</p>
-        <Link className="mt-4 inline-flex text-sm font-semibold text-indigo-600 hover:underline" to="/">
-          ← Назад до списку
-        </Link>
+      <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+        <Card variant="muted" className="space-y-3 text-base text-slate-600">
+          <p className="font-semibold text-rose-600">{error}</p>
+          <Button as={Link} to="/" variant="outline" size="sm">
+            ← Назад до списку
+          </Button>
+        </Card>
       </section>
     )
   }
@@ -90,42 +94,43 @@ export default function PostPage() {
   }
 
   return (
-    <section className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between gap-3">
-        <Link className="inline-flex text-sm font-semibold text-indigo-600 hover:underline" to="/">
-          ← Назад до списку
-        </Link>
-        <Link
-          to={`/edit/${post.id}`}
-          className="text-sm font-semibold text-indigo-600 transition hover:text-indigo-500 hover:underline"
-        >
-          Редагувати пост
-        </Link>
-      </div>
-
-      <article className="rounded-2xl border border-slate-200 bg-white/90 p-8 shadow-sm">
-        <header className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">Публікація</p>
-          <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">{post.title}</h1>
-          <div className="text-sm text-slate-500">
-            <p className="font-medium text-slate-700">Автор: {post.author}</p>
-            <p>{formatDate(post.createdAt)}</p>
+    <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className="space-y-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <Button as={Link} to="/" variant="outline" size="sm">
+            ← Назад до списку
+          </Button>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Button as={Link} to={`/edit/${post.id}`} variant="secondary" size="sm">
+              Редагувати пост
+            </Button>
+            <Button
+              type="button"
+              variant="danger"
+              size="sm"
+              onClick={handleDelete}
+              disabled={deleting}
+            >
+              {deleting ? 'Видалення…' : 'Видалити пост'}
+            </Button>
           </div>
-        </header>
+        </div>
 
-        <div className="mt-8 whitespace-pre-line text-base leading-relaxed text-slate-800">{post.content}</div>
-      </article>
+        <Card as="article" padding="lg" className="space-y-6">
+          <header className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-600">Публікація</p>
+            <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">{post.title}</h1>
+            <div className="text-sm text-slate-500">
+              <p className="font-medium text-slate-700">Автор: {post.author}</p>
+              <p>{formatDate(post.createdAt)}</p>
+            </div>
+          </header>
 
-      <button
-        type="button"
-        onClick={handleDelete}
-        disabled={deleting}
-        className="mt-4 text-red-600 transition hover:underline disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {deleting ? 'Deleting…' : 'Delete Post'}
-      </button>
+          <div className="whitespace-pre-line text-base leading-relaxed text-slate-800">{post.content}</div>
+        </Card>
 
-      <CommentsSection postId={post.id} />
+        <CommentsSection postId={post.id} />
+      </div>
     </section>
   )
 }

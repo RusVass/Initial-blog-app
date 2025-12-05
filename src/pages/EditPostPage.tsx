@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Button } from '../components/ui/Button'
+import { Card } from '../components/ui/Card'
+import { Input } from '../components/ui/Input'
 import { getPostById, updatePostInFirestore } from '../services/firebase'
 import { postSchema, type PostFormData } from '../utils/postSchema'
 
@@ -84,7 +87,7 @@ export default function EditPostPage() {
 
   if (loading) {
     return (
-      <section className="mx-auto max-w-2xl px-4 py-10 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
         <p className="text-base text-slate-500">Завантаження даних поста…</p>
       </section>
     )
@@ -92,83 +95,91 @@ export default function EditPostPage() {
 
   if (fetchError) {
     return (
-      <section className="mx-auto max-w-2xl px-4 py-10 sm:px-6 lg:px-8">
-        <p className="text-base text-red-600">{fetchError}</p>
-        <Link className="mt-4 inline-flex text-sm font-semibold text-indigo-600 hover:underline" to="/">
-          ← Назад до списку
-        </Link>
+      <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+        <Card variant="muted" className="space-y-3 text-base text-slate-600">
+          <p className="font-semibold text-rose-600">{fetchError}</p>
+          <Button as={Link} to="/" variant="outline" size="sm">
+            ← Назад до списку
+          </Button>
+        </Card>
       </section>
     )
   }
 
   return (
-    <section className="container mx-auto max-w-2xl p-6">
-      <Link className="mb-6 inline-flex text-sm font-semibold text-indigo-600 hover:underline" to={`/post/${id}`}>
-        ← Назад до поста
-      </Link>
-      <h1 className="text-3xl font-semibold">Редагувати пост</h1>
-      <p className="text-muted-foreground">Оновіть поля та збережіть зміни.</p>
+    <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className="space-y-6">
+        <Button as={Link} to={id ? `/post/${id}` : '/'} variant="outline" size="sm">
+          ← Назад до поста
+        </Button>
+        <header className="space-y-2">
+          <p className="text-sm font-semibold uppercase tracking-wide text-indigo-600">Редагування</p>
+          <h1 className="text-3xl font-bold text-slate-900">Редагувати пост</h1>
+          <p className="text-base text-slate-500">Оновіть дані та збережіть зміни.</p>
+        </header>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 grid gap-5">
-        <div className="grid gap-2">
-          <label htmlFor="title" className="text-sm font-medium">
-            Заголовок
-          </label>
-          <input
-            id="title"
-            aria-invalid={Boolean(errors.title)}
-            {...register('title')}
-            placeholder="Оновлений заголовок"
-            className="input text-slate-900 placeholder:text-slate-500"
-            disabled={isSubmitting}
-          />
-          {errors.title && <p className="text-sm text-red-500">{errors.title.message}</p>}
-        </div>
+        <Card as="form" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <div className="space-y-1.5">
+            <label htmlFor="title" className="text-sm font-medium text-slate-700">
+              Заголовок
+            </label>
+            <Input
+              id="title"
+              aria-invalid={Boolean(errors.title)}
+              placeholder="Оновлений заголовок"
+              disabled={isSubmitting}
+              {...register('title')}
+            />
+            {errors.title && <p className="text-sm text-rose-600">{errors.title.message}</p>}
+          </div>
 
-        <div className="grid gap-2">
-          <label htmlFor="author" className="text-sm font-medium">
-            Автор
-          </label>
-          <input
-            id="author"
-            aria-invalid={Boolean(errors.author)}
-            {...register('author')}
-            placeholder="Ім'я автора"
-            className="input text-slate-900 placeholder:text-slate-500"
-            disabled={isSubmitting}
-          />
-          {errors.author && <p className="text-sm text-red-500">{errors.author.message}</p>}
-        </div>
+          <div className="space-y-1.5">
+            <label htmlFor="author" className="text-sm font-medium text-slate-700">
+              Автор
+            </label>
+            <Input
+              id="author"
+              aria-invalid={Boolean(errors.author)}
+              placeholder="Ім’я автора"
+              disabled={isSubmitting}
+              {...register('author')}
+            />
+            {errors.author && <p className="text-sm text-rose-600">{errors.author.message}</p>}
+          </div>
 
-        <div className="grid gap-2">
-          <label htmlFor="content" className="text-sm font-medium">
-            Контент
-          </label>
-          <textarea
-            id="content"
-            aria-invalid={Boolean(errors.content)}
-            {...register('content')}
-            placeholder="Оновлений текст поста…"
-            className="input min-h-[12rem] text-slate-900 placeholder:text-slate-500"
-            disabled={isSubmitting}
-          />
-          {errors.content && <p className="text-sm text-red-500">{errors.content.message}</p>}
-        </div>
+          <div className="space-y-1.5">
+            <label htmlFor="content" className="text-sm font-medium text-slate-700">
+              Контент
+            </label>
+            <Input
+              as="textarea"
+              id="content"
+              aria-invalid={Boolean(errors.content)}
+              placeholder="Оновлений текст поста…"
+              disabled={isSubmitting}
+              {...register('content')}
+            />
+            {errors.content && <p className="text-sm text-rose-600">{errors.content.message}</p>}
+          </div>
 
-        {submitError && <p className="text-sm text-red-600">{submitError}</p>}
+          {submitError && <p className="text-sm text-rose-600">{submitError}</p>}
 
-        <div className="flex items-center gap-3">
-          <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-            {isSubmitting ? 'Збереження…' : 'Зберегти зміни'}
-          </button>
-          <Link
-            to={id ? `/post/${id}` : '/'}
-            className="inline-flex items-center justify-center rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-          >
-            Скасувати
-          </Link>
-        </div>
-      </form>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Button type="submit" size="lg" disabled={isSubmitting}>
+              {isSubmitting ? 'Збереження…' : 'Зберегти зміни'}
+            </Button>
+            <Button
+              as={Link}
+              to={id ? `/post/${id}` : '/'}
+              variant="outline"
+              size="lg"
+              disabled={isSubmitting}
+            >
+              Скасувати
+            </Button>
+          </div>
+        </Card>
+      </div>
     </section>
   )
 }

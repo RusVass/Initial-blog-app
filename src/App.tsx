@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
+import { Button } from './components/ui/Button'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -56,13 +57,9 @@ function App() {
           <p className="text-sm font-medium uppercase tracking-[0.2em] text-slate-400">
             Interactive counter
           </p>
-          <button
-            type="button"
-            onClick={() => setCount((value) => value + 1)}
-            className="rounded-full bg-gradient-to-r from-indigo-500 to-sky-500 px-8 py-3 text-lg font-semibold text-white shadow-lg shadow-indigo-500/40 transition hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 focus-visible:ring-indigo-300"
-          >
+          <Button size="lg" onClick={() => setCount((value) => value + 1)}>
             Count is {count}
-          </button>
+          </Button>
           <p className="text-sm text-slate-400">
             Edit <span className="font-mono text-indigo-300">src/App.tsx</span>{' '}
             and save to test HMR.

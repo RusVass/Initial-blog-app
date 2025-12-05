@@ -1,4 +1,7 @@
 import { type FormEvent, useEffect, useState } from 'react'
+import { Button } from './ui/Button'
+import { Card } from './ui/Card'
+import { Input } from './ui/Input'
 import { addCommentToPost, fetchCommentsForPost } from '../services/firebase'
 import type { Comment } from '../types/Comment'
 
@@ -72,64 +75,77 @@ export function CommentsSection({ postId }: CommentsSectionProps) {
   }
 
   return (
-    <section className="mt-10 rounded-2xl border border-slate-200 bg-white/70 p-6">
-      <header className="mb-6">
-        <h2 className="text-xl font-semibold text-slate-900">Коментарі</h2>
-        <p className="text-sm text-slate-500">Залиште свій відгук про цю публікацію.</p>
-      </header>
+    <section className="space-y-6">
+      <Card className="space-y-6">
+        <header className="space-y-1">
+          <h2 className="text-xl font-semibold text-slate-900">Коментарі</h2>
+          <p className="text-sm text-slate-500">Залиште свій відгук про цю публікацію.</p>
+        </header>
 
-      <form onSubmit={handleSubmit} className="grid gap-3 rounded-xl border border-slate-100 bg-white/80 p-4 shadow-sm">
-        <label className="grid gap-1 text-sm font-medium text-slate-700">
-          Імʼя
-          <input
-            type="text"
-            name="author"
-            value={author}
-            onChange={(event) => setAuthor(event.target.value)}
-            className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-            placeholder="Ваше імʼя"
-            autoComplete="name"
-            disabled={submitting}
-          />
-        </label>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1.5">
+            <label htmlFor="comment-author" className="text-sm font-medium text-slate-700">
+              Імʼя
+            </label>
+            <Input
+              id="comment-author"
+              name="author"
+              value={author}
+              onChange={(event) => setAuthor(event.target.value)}
+              placeholder="Ваше імʼя"
+              autoComplete="name"
+              disabled={submitting}
+            />
+          </div>
 
-        <label className="grid gap-1 text-sm font-medium text-slate-700">
-          Коментар
-          <textarea
-            name="text"
-            value={text}
-            onChange={(event) => setText(event.target.value)}
-            className="min-h-[120px] rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-            placeholder="Поділіться думками…"
-            disabled={submitting}
-          />
-        </label>
+          <div className="space-y-1.5">
+            <label htmlFor="comment-text" className="text-sm font-medium text-slate-700">
+              Коментар
+            </label>
+            <Input
+              as="textarea"
+              id="comment-text"
+              name="text"
+              value={text}
+              onChange={(event) => setText(event.target.value)}
+              placeholder="Поділіться думками…"
+              disabled={submitting}
+            />
+          </div>
 
-        <button
-          type="submit"
-          disabled={submitting || !author.trim() || !text.trim()}
-          className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {submitting ? 'Надсилання…' : 'Додати коментар'}
-        </button>
-      </form>
+          <Button type="submit" disabled={submitting || !author.trim() || !text.trim()}>
+            {submitting ? 'Надсилання…' : 'Додати коментар'}
+          </Button>
+        </form>
 
-      {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-rose-600">{error}</p>}
+      </Card>
 
-      <div className="mt-6">
+      <div>
         {loading ? (
-          <p className="text-sm text-slate-500">Завантаження коментарів…</p>
+          <Card variant="muted" className="text-sm text-slate-500">
+            Завантаження коментарів…
+          </Card>
         ) : comments.length === 0 ? (
-          <p className="text-sm text-slate-500">Поки що немає жодного коментаря.</p>
+          <Card variant="muted" className="text-sm text-slate-500">
+            Поки що немає жодного коментаря.
+          </Card>
         ) : (
           <ul className="space-y-3">
             {comments.map((comment) => (
-              <li key={comment.id} className="rounded-xl border border-slate-100 bg-white/80 p-4 shadow-sm">
-                <p className="text-sm text-slate-800">{comment.text}</p>
-                <p className="mt-2 text-xs text-slate-500">
-                  — <span className="font-medium text-slate-700">{comment.author}</span>, {formatCommentDate(comment.createdAt)}
+              <Card
+                as="li"
+                key={comment.id}
+                variant="muted"
+                padding="sm"
+                className="space-y-2 text-sm text-slate-800"
+              >
+                <p>{comment.text}</p>
+                <p className="text-xs text-slate-500">
+                  — <span className="font-medium text-slate-700">{comment.author}</span>,{' '}
+                  {formatCommentDate(comment.createdAt)}
                 </p>
-              </li>
+              </Card>
             ))}
           </ul>
         )}

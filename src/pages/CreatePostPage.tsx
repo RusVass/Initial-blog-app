@@ -1,6 +1,9 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from 'react-router-dom'
+import { Button } from '../components/ui/Button'
+import { Card } from '../components/ui/Card'
+import { Input } from '../components/ui/Input'
 import { addPostToFirestore } from '../services/firebase'
 import { postSchema, type PostFormData } from '../utils/postSchema'
 
@@ -24,58 +27,76 @@ export default function CreatePostPage() {
     navigate('/')
   }
 
+  const handleCancel = () => {
+    navigate(-1)
+  }
+
   return (
-    <section className="container mx-auto max-w-2xl p-6">
-      <h1 className="text-3xl font-semibold">Створити новий пост</h1>
-      <p className="text-muted-foreground">Заповніть поля, щоб опублікувати історію.</p>
+    <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className="space-y-6">
+        <header className="space-y-2">
+          <p className="text-sm font-semibold uppercase tracking-wide text-indigo-600">Нова публікація</p>
+          <h1 className="text-3xl font-bold text-slate-900">Створити пост</h1>
+          <p className="text-base text-slate-500">Заповніть поля нижче, щоб опублікувати історію.</p>
+        </header>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 grid gap-5">
-        <div className="grid gap-2">
-          <label htmlFor="title" className="text-sm font-medium">
-            Заголовок
-          </label>
-          <input
-            id="title"
-            aria-invalid={Boolean(errors.title)}
-            {...register('title')}
-            placeholder="Наприклад: Мій перший пост"
-            className="input text-slate-900 placeholder:text-slate-500"
-          />
-          {errors.title && <p className="text-sm text-red-500">{errors.title.message}</p>}
-        </div>
+        <Card as="form" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <div className="space-y-1.5">
+            <label htmlFor="title" className="text-sm font-medium text-slate-700">
+              Заголовок
+            </label>
+            <Input
+              id="title"
+              aria-invalid={Boolean(errors.title)}
+              placeholder="Наприклад: Мій перший пост"
+              {...register('title')}
+            />
+            {errors.title && <p className="text-sm text-rose-600">{errors.title.message}</p>}
+          </div>
 
-        <div className="grid gap-2">
-          <label htmlFor="author" className="text-sm font-medium">
-            Автор
-          </label>
-          <input
-            id="author"
-            aria-invalid={Boolean(errors.author)}
-            {...register('author')}
-            placeholder="Ваше ім'я"
-            className="input text-slate-900 placeholder:text-slate-500"
-          />
-          {errors.author && <p className="text-sm text-red-500">{errors.author.message}</p>}
-        </div>
+          <div className="space-y-1.5">
+            <label htmlFor="author" className="text-sm font-medium text-slate-700">
+              Автор
+            </label>
+            <Input
+              id="author"
+              aria-invalid={Boolean(errors.author)}
+              placeholder="Ваше ім’я"
+              {...register('author')}
+            />
+            {errors.author && <p className="text-sm text-rose-600">{errors.author.message}</p>}
+          </div>
 
-        <div className="grid gap-2">
-          <label htmlFor="content" className="text-sm font-medium">
-            Контент
-          </label>
-          <textarea
-            id="content"
-            aria-invalid={Boolean(errors.content)}
-            {...register('content')}
-            placeholder="Розкажіть щось цікаве..."
-            className="input min-h-[12rem] text-slate-900 placeholder:text-slate-500"
-          />
-          {errors.content && <p className="text-sm text-red-500">{errors.content.message}</p>}
-        </div>
+          <div className="space-y-1.5">
+            <label htmlFor="content" className="text-sm font-medium text-slate-700">
+              Контент
+            </label>
+            <Input
+              as="textarea"
+              id="content"
+              aria-invalid={Boolean(errors.content)}
+              placeholder="Розкажіть щось цікаве…"
+              {...register('content')}
+            />
+            {errors.content && <p className="text-sm text-rose-600">{errors.content.message}</p>}
+          </div>
 
-        <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-          {isSubmitting ? 'Збереження…' : 'Створити пост'}
-        </button>
-      </form>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Button type="submit" size="lg" disabled={isSubmitting} className="w-full sm:w-auto">
+              {isSubmitting ? 'Збереження…' : 'Створити пост'}
+            </Button>
+            <Button
+              type="button"
+              size="lg"
+              onClick={handleCancel}
+              disabled={isSubmitting}
+              className="w-full sm:w-auto"
+            >
+              Скасувати
+            </Button>
+          </div>
+        </Card>
+      </div>
     </section>
   )
 }
