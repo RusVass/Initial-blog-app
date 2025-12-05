@@ -1,27 +1,21 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { fetchPosts } from '../features/posts/postsSlice'
+import { usePostsSWR } from '../hooks/usePostsSWR'
 import type { Post } from '../types/Post'
 
 export default function HomePage() {
-  const dispatch = useAppDispatch()
-  const { posts, loading, error } = useAppSelector((state) => state.posts)
+  const { posts, isLoading, error } = usePostsSWR()
   const [filter, setFilter] = useState('')
-
-  useEffect(() => {
-    dispatch(fetchPosts())
-  }, [dispatch])
 
   const filteredPosts = useMemo(() => {
     const normalized = filter.trim().toLowerCase()
     if (!normalized) {
       return posts
     }
-    return posts.filter((post) => post.author.toLowerCase().includes(normalized))
+    return posts.filter((post) => post.author?.toLowerCase().includes(normalized) ?? false)
   }, [filter, posts])
 
-  if (loading) {
+  if (isLoading) {
     return (
       <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
         <p className="text-base text-slate-500">Завантаження постів…</p>
@@ -30,9 +24,10 @@ export default function HomePage() {
   }
 
   if (error) {
+    const message = error instanceof Error ? error.message : 'Не вдалося завантажити публікації'
     return (
       <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-        <p className="text-base text-red-600">Помилка: {error}</p>
+        <p className="text-base text-red-600">Помилка: {message}</p>
       </section>
     )
   }
@@ -96,11 +91,22 @@ function PostCard({ post }: PostCardProps) {
   )
 }
 
-function formatDate(value: string) {
-  const parsed = new Date(value)
+function formatDate(value: unknown) {
+  if (!value) {
+    return 'Невідома дата'
+  }
+
+  const parsed =
+    typeof value === 'string'
+      ? new Date(value)
+      : value instanceof Date
+        ? value
+        : new Date(String(value))
+
   if (Number.isNaN(parsed.getTime())) {
     return 'Невідома дата'
   }
+
   return parsed.toLocaleString('uk-UA', {
     day: '2-digit',
     month: 'short',
