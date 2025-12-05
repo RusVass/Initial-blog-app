@@ -1,4 +1,9 @@
-import type { ButtonHTMLAttributes, ComponentPropsWithoutRef, ElementType } from 'react'
+import type {
+  ButtonHTMLAttributes,
+  ComponentPropsWithoutRef,
+  ElementType,
+  MouseEvent,
+} from 'react'
 import { cn } from '../../lib/cn'
 
 interface VariantStyles {
@@ -19,7 +24,8 @@ type ButtonProps<T extends ElementType = 'button'> = {
   variant?: keyof VariantStyles
   size?: keyof SizeStyles
   className?: string
-} & ComponentPropsWithoutRef<T>
+  disabled?: boolean
+} & Omit<ComponentPropsWithoutRef<T>, 'disabled'>
 
 const variantStyles: VariantStyles = {
   primary:
@@ -46,6 +52,7 @@ export function Button<T extends ElementType = 'button'>({
   variant = 'primary',
   size = 'md',
   className,
+  disabled,
   ...props
 }: ButtonProps<T>) {
   const Component = (as ?? 'button') as ElementType
@@ -59,6 +66,23 @@ export function Button<T extends ElementType = 'button'>({
     const buttonProps = componentProps as ButtonHTMLAttributes<HTMLButtonElement>
     if (!buttonProps.type) {
       buttonProps.type = 'button'
+    }
+    if (disabled !== undefined) {
+      buttonProps.disabled = disabled
+    }
+  } else if (disabled) {
+    const elementProps = componentProps as Record<string, unknown>
+    const originalOnClick = componentProps.onClick as
+      | ((event: MouseEvent<HTMLElement>) => void)
+      | undefined
+
+    elementProps['aria-disabled'] = true
+    elementProps['tabIndex'] = -1
+    elementProps['onClick'] = (event: MouseEvent<HTMLElement>) => {
+      event.preventDefault()
+      if (originalOnClick) {
+        originalOnClick(event)
+      }
     }
   }
 
